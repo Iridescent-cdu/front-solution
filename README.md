@@ -81,9 +81,9 @@
 
    并且在`.vue`和`.js`文件里右键设置默认格式化程序为`prettier`；同时可在VS Code里设置`Format On Save`
 
-2. Eslint：用于对JavaScript代码质量和风格检查，提供部分的修复功能，在与prettier一起使用时，会因为规则相同时发生冲突，核心解决原理：**禁用掉eslint中与prettier冲突的规则，将prettier的配置作为eslint配置，即prettier和eslint共享这些代码格式化规则**，社区提供了两种便捷的解决方案
+2. `Eslint`：用于对JavaScript代码质量和风格检查，提供部分的修复功能，在与prettier一起使用时，会因为规则相同时发生冲突，社区提供了两种便捷的解决方案
 
-   1. eslint-config-prettier：会关闭ESlint中有关代码格式化的配置，原理是关闭ESlint中所有与代码格式化相关的规则，并使用prettier中的规则进行代替，在使用时，应该放在extends节点的最后
+   1. `eslint-config-prettier`：会关闭ESlint中有关代码格式化的配置，原理是关闭`ESlint`中所有与代码格式化相关的规则，并使用`prettier`中的规则进行代替，即关闭eslint格式化的能力，使用`prettier`代替，不会报出代码格式不规范的错误而是直接格式化；在使用时，应该放在`extends`节点的最后
 
       ```shell
       npm install --save-dev eslint-config-prettier
@@ -99,7 +99,7 @@
       }
       ```
 
-   2. eslint-plugin-prettier：把prettier配置成eslint的一个插件，让其当做linter规则来运行，注意使用该插件需要安装prettier依赖
+   2. `eslint-config-prettier+eslint-plugin-prettier`：两个包结合使用首先将关闭`eslint`中与`prettier`相互冲突的规则，然后只使用`eslint`进行代码格式化，即把`prettier`配置成`eslint`的一个插件，使用`prettier`中的规则来运行`eslint`，此时当不满足`prettier`的代码格式规则时会报出eslint错误，注意使用该插件需要安装`prettier`依赖
 
       ```shell
       npm install --save-dev eslint-config-prettier
@@ -112,15 +112,40 @@
       }
       ```
 
-   3. 发现的问题，当使用`eslint-config-prettier`来解决冲突时，当修改了`.prettierrc`文件时，编辑器无法立即同步解决`eslint`和`prettier`之间的冲突，此时需要重启VS Code编辑器
+   3. 对于`plugin:prettier/recommended`，它做了这些事：
 
-3. Tailwind CSS IntelliSense：tailwindcss类名提示
+      ```js
+      module.exports = {
+           // plugin:prettier/recommended 就是加载这个
+        configs: {
+          recommended: {
+            extends: ['prettier'],
+            plugins: ['prettier'],
+            rules: {
+              'prettier/prettier': 'error',
+              'arrow-body-style': 'off',
+              'prefer-arrow-callback': 'off',
+            },
+          },
+        },
+        // 其他的
+      }
+      ```
 
-4. Vue Language Features (Volar)
+      1. `extends:['prettier']`：通过`eslint-config-prettier`关闭`eslint`和`prettier`相冲突的规则
+      2. `plugins:['prettier']`：加载`eslint-plugin-prettier`，赋予`eslint`用`prettier`格式化的能力
+      3. `'prettier/prettier':'error`：让代码文件中不符合`prettier`格式化规则的标记为错误，当运行`eslint--fix`命令时，将自动修复这些错误
+      4. `arrow-body-style和prefer-arrow-callback`：这两个规则在eslint和prettier中存在不可解决的冲突，所以关闭掉
+
+   4. 注意：当修改了`.prettierrc`文件时，编辑器无法立即同步解决`eslint`和`prettier`之间的冲突，这是因为`vscode`插件缓存没有及时更新，重启`vscode`即可
+
+3. `Tailwind CSS IntelliSense`：`tailwindcss`类名提示
+
+4. `Vue Language Features (Volar)`
 
 ### 2.配置prettier和eslint并解决冲突
 
-1. `vscode`本地配置`.prettierrc`：注意当修改了prettier规则之后，可以通过观察vscode右下角prettier控制台打印出的信息进行判断
+1. `vscode`本地配置`.prettierrc`：注意当修改了prettier规则之后，可以通过观察`vscode`右下角`prettier`控制台打印出的信息进行判断
 
    ```json
     //prettier插件配置路径
@@ -8311,4 +8336,3 @@ export const oauthLogin = async (oauthType, oauthData) => {
          ```
 
 2. 使用`xftp`工具将项目打包后的`dist`目录传到服务器`nginx`服务对应的`dist`目录下
-
