@@ -1,4 +1,4 @@
-# 基于Vue3、vite、tailwindcss、vue-router、vuex和vueuse的前中台解决方案
+# 基于Vue3+tailwindcss的前中台解决方案
 
 ## 1.通过vite构建
 
